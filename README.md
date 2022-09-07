@@ -1,1 +1,1 @@
-# GitHub-Intro
+# OpenAPI Sample Design
