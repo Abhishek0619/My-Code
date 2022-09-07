@@ -1,0 +1,226 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "OpenAPI Course",
+    "description" : "Specification for OpenAPI Course",
+    "termsOfService" : "http://example.com/terms/",
+    "contact" : {
+      "name" : "Abhishek Sur",
+      "url" : "https://abhisheksur.api",
+      "email" : "abhisheksur619@gmail.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version" : "1.0"
+  },
+  "servers" : [ {
+    "url" : "https://dev.example.com",
+    "description" : "Development Server"
+  }, {
+    "url" : "https://qa.example.com",
+    "description" : "QA Server"
+  }, {
+    "url" : "https://prod.example.com",
+    "description" : "Production Server"
+  } ],
+  "paths" : {
+    "/v1/customers" : {
+      "get" : {
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/PageNumberParameter"
+        }, {
+          "$ref" : "#/components/parameters/PageSizeParameter"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of Customers",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CustomerPagedList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/cars" : {
+      "get" : {
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/PageNumberParameter"
+        }, {
+          "$ref" : "#/components/parameters/PageSizeParameter"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of Cars",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CarPagedList"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "No cars found"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "parameters" : {
+      "PageNumberParameter" : {
+        "name" : "pageNumber",
+        "in" : "query",
+        "description" : "Page Number",
+        "schema" : {
+          "type" : "integer",
+          "format" : "int32",
+          "default" : 1
+        }
+      },
+      "PageSizeParameter" : {
+        "name" : "pageSize",
+        "in" : "query",
+        "description" : "Page Size",
+        "schema" : {
+          "type" : "integer",
+          "format" : "int32",
+          "default" : 25
+        }
+      }
+    },
+    "schemas" : {
+      "Address" : {
+        "type" : "object",
+        "properties" : {
+          "country" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "zipCode" : {
+            "type" : "string",
+            "enum" : [ "WB", "DL", "JH", "HR" ]
+          }
+        }
+      },
+      "Customers" : {
+        "type" : "object",
+        "description" : "Customer object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "address" : {
+            "$ref" : "#/components/schemas/Address"
+          }
+        }
+      },
+      "CustomerList" : {
+        "type" : "array",
+        "minItems" : 1,
+        "maxItems" : 100,
+        "items" : {
+          "$ref" : "#/components/schemas/Customers"
+        }
+      },
+      "CustomerPagedList" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/PagedResponse"
+        } ],
+        "properties" : {
+          "content" : {
+            "$ref" : "#/components/schemas/CustomerList"
+          }
+        }
+      },
+      "AutoUnit" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "location" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Car" : {
+        "type" : "object",
+        "description" : "Car objects",
+        "properties" : {
+          "carName" : {
+            "type" : "string"
+          },
+          "brand" : {
+            "type" : "string",
+            "enum" : [ "BMW", "XUV", "AUDI" ]
+          },
+          "price" : {
+            "type" : "number",
+            "format" : "float"
+          },
+          "quantity" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "AutoUnit" : {
+            "$ref" : "#/components/schemas/AutoUnit"
+          }
+        }
+      },
+      "CarList" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/Car"
+        }
+      },
+      "CarPagedList" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/PagedResponse"
+        } ],
+        "properties" : {
+          "content" : {
+            "$ref" : "#/components/schemas/CarList"
+          }
+        }
+      },
+      "PagedResponse" : {
+        "type" : "object",
+        "properties" : {
+          "pageable" : {
+            "type" : "object",
+            "properties" : {
+              "sort" : {
+                "type" : "object",
+                "properties" : {
+                  "sorted" : {
+                    "type" : "boolean"
+                  },
+                  "unsorted" : {
+                    "type" : "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
